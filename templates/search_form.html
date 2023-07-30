@@ -1,0 +1,38 @@
+{% extends "template.html" %}
+{% block content %}
+<form method="post" action="/search" class="container__form">
+
+    <!-- Radiogroup -->
+    <div>
+        <label for="cnjPattern">
+            <input type="radio" id="cnjPattern" value="1" name="searchByCnjPattern" checked/> Padrão CNJ
+        </label>
+        <label for="knownCourt">
+            <input type="radio" id="knownCourt" value="0" name="searchByCnjPattern"/> Tribual conhecido
+        </label>
+    </div>
+
+    <!-- Campos de texto -->
+    {% if True %}
+    <div>
+        <label for="cnj">CNJ:</label>
+        <input type="text" id="cnj" name="cnj" placeholder="NNNNNNN-DD.AAAA.J.TR.OOOO" required>
+    </div>
+    {% else %}
+    <div>
+        <label for="processNumber">Número do processo: </label>
+        <input type="text" id="processNumber" name="processNumber" required>
+        <!-- Caixa de seleção -->
+        <label for="court">Caixa de Seleção:</label>
+        <select id="court" name="court">
+            <option value="tjal">TJAL</option>
+            <option value="tjce">TJCE</option>
+        </select>
+    </div>
+    {% endif %}
+
+    <!-- Botão de submissão -->
+    <button type="submit" value="buscar">Buscar</button>
+
+</form>
+{% endblock %}
