@@ -17,12 +17,5 @@ def remove_special_symbols_from_cnj(cnj: str):
     return cnj.replace('-', '').replace('.', '')
 
 
-def extract_metadata_from_cnj(cnj: str):
-    cnj_parts = cnj.split(sep='.')
-    a = cnj_parts[0].split(sep='-')[1]
-    print(cnj_parts, a)
-
-
 def find_court_from_cnj_by_regex(cnj: str, court_code: str):
-    match = re.search(court_code, cnj)
-    return match.group()
+    return re.search(court_code, cnj)
