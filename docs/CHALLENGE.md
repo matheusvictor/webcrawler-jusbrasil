@@ -39,6 +39,7 @@ Tanto o TJAL como o TJCE tem uma interface web para a consulta de processos. O e
 ### Exemplos de processos:
 
 - 0710802-55.2018.8.02.0001 - TJAL
+- 0017486-52.2009.8.02.0001 - TJAL
 para mais números de processo, busque no diário oficial de Alagoas: https://www.jusbrasil.com.br/diarios/DJAL/
 
 - 0070337-91.2008.8.06.0001 - TJCE
