@@ -1,5 +1,4 @@
 import logging
-import re
 
 from constants import constants
 from helpers.utils import (find_court_from_cnj_by_regex,
@@ -100,33 +99,6 @@ def main():
             #     pass
             # else:
             #     parts_section_result.get('autor').get('autores').append(part_content)
-    #
-    # # list_attrs = list()
-    # #
-    # # for div in main_section:
-    # #     list_attrs.append(div.find('span', {'id': 'numeroProcesso'}).text.strip())
-    # #
-    # # print(list_attrs)
-    # #
-    # # div_ids_from_main_section = find_section_keys(main_section)
-    # #
-    # # print(div_ids_from_main_section)
-    # #
-    # # class_process = crawler_tjal.get_tags_from_page_by_properties(body, 'span', {'id': 'assuntoProcesso'})[0].text
-    # # field = crawler_tjal.get_tags_from_page_by_properties(body, 'div', {'id': 'areaProcesso'})[0].text
-    # #
-    # # data_from_main_section = {
-    # #     'classe': class_process,
-    # #     'area': field,
-    # #     'assunto': '',
-    # #     'dataDistribuicao': '',
-    # #     'juiz': '',
-    # #     'valorAcao': 0,
-    # #     'partes': [{}],
-    # #     'movimentacoes': [{}]
-    # # }
-    # #
-    # # print(data_from_main_section)
 
 
 if __name__ == '__main__':
