@@ -41,16 +41,7 @@ def main():
                 dataHoraDistribuicao=None,
                 valorAcao=None
             ),
-            partesProcesso=dict(
-                autoresProcesso=dict(
-                    pessoas=list(),
-                    profissionais=set()
-                ),
-                reusProcesso=dict(
-                    reus=list(),
-                    advogados=list()
-                )
-            )
+            partesProcesso=dict()
         )
 
         for div_id in main_section:
@@ -91,14 +82,19 @@ def main():
         for block in parts_section_rows:
             # FIXME: Corrigir extração das partes
             part_type = remover_simbolos_especiais(block.find(class_='tipoDeParticipacao').text)
-            part_content = block.text
-            r = extrair_advogados_autores(part_content)
-            # content = remover_simbolos_especiais(block.text)
-            # part_content = re.split(r'Advogad\w\W', block.text)
-            # if 'Autor' in part_type:
-            #     pass
-            # else:
-            #     parts_section_result.get('autor').get('autores').append(part_content)
+            list_parts_process = block.text.replace('\t', '').split('\n')
+            list_parts_process = [part for part in list_parts_process if part is not '']
+            indice_divisor = list_parts_process.index(' ')
+            first_part = list_parts_process[:indice_divisor]
+            second_part = list_parts_process[indice_divisor + 1:]
+
+            if f'{part_type.lower()}' not in data_from_main_section:
+                data_from_main_section.get('partesProcesso')[f'{part_type.lower()}'] = dict()
+            data_from_main_section.get('partesProcesso')[f'{part_type.lower()}']['nomes'] = first_part
+
+            if 'nomesProfissionais' not in data_from_main_section.get('partesProcesso')[f'{part_type.lower()}']:
+                data_from_main_section.get('partesProcesso')[f'{part_type.lower()}']['nomesProfissionais'] = set()
+            data_from_main_section.get('partesProcesso')[f'{part_type.lower()}']['nomesProfissionais'] = second_part
 
 
 if __name__ == '__main__':
