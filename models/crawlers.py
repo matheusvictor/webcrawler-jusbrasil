@@ -58,8 +58,6 @@ class TjalFirstInstance(Crawler):
     def extract(self):
         if not is_cnj_format_valid(self.cnj):
             logging.error('Formato de CNJ inválido!')
-            # TODO: Na chamada da API, essa condicional deve retornar uma response de erro
-            # TODO: Caso inválido, mostrar mensagem de erro ainda no campo do form do front-end
 
         logging.info('Formato de CNJ válido!')
         if find_court_from_cnj_by_regex(self.cnj, self.court_code()):
@@ -70,27 +68,26 @@ class TjalFirstInstance(Crawler):
             main_section = body.find_all('div', {'id': 'containerDadosPrincipaisProcesso'})
 
             result = dict(
-                principal=dict(
+                detalhes=dict(
                     classe=None,
                     assunto=None,
-                    juiz=None
-                ),
-                detalhes=dict(
                     area=None,
+                    juiz=None,
                     dataHoraDistribuicao=None,
                     valorAcao=None
                 ),
-                partesProcesso=dict()
+                partesProcesso=dict(),
+                movimentacoes=dict()
             )
 
             for div_id in main_section:
-                result.get('principal')['classe'] = div_id.find(
+                result.get('detalhes')['classe'] = div_id.find(
                     'span', {'id': 'classeProcesso'}
                 ).text.strip()
-                result.get('principal')['assunto'] = div_id.find(
+                result.get('detalhes')['assunto'] = div_id.find(
                     'span', {'id': 'assuntoProcesso'}
                 ).text.strip()
-                result.get('principal')['juiz'] = div_id.find(
+                result.get('detalhes')['juiz'] = div_id.find(
                     'span', {'id': 'juizProcesso'}
                 ).text.strip()
 
@@ -109,20 +106,21 @@ class TjalFirstInstance(Crawler):
                 ).text.strip()
 
             logging.info('Coletando informações das partes envolvidas no processo...')
-            parts_section = body.find('table', {'id': 'tableTodasPartes'})
+            parts_section = body.find('table')
 
             parts_section_rows = parts_section.find_all('tr')
 
             for block in parts_section_rows:
-                part_type = remove_special_symbols_from_string(block.find(class_='tipoDeParticipacao').text).lower()
+                part_type = remove_special_symbols_from_string(
+                    block.find(class_='tipoDeParticipacao').text).lower().strip()
                 list_parts_process = block.find(class_='nomeParteEAdvogado').text.strip().split('\t \n')
 
                 for element in list_parts_process:
-                    part = remove_special_symbols_from_string(element.strip())
+                    part = remove_special_symbols_from_string(element)
                     if not part:
                         continue
-                    person_data = part.split(':')
-                    person_data.reverse()  # garante que o nome do indivíduo esteja sempre no primeiro índice
+                    person_data = part.split('\xa0')
+                    # person_data.reverse()
 
                     if part_type not in result.get('partesProcesso').keys():
                         result.get('partesProcesso').update(
@@ -131,9 +129,9 @@ class TjalFirstInstance(Crawler):
                             }
                         )
                     result.get('partesProcesso').get(f'{part_type}').append(
-                        (
-                            person_data[0],
-                            person_data[1] if len(person_data) > 1 else 'N/A'
+                        dict(
+                            nomes=[name for name in person_data if ':' not in name],
+                            categoria=person_data[0].replace(':', '') if len(person_data) > 1 else 'N/A'
                         )
                     )
 
