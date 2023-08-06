@@ -77,7 +77,7 @@ class TjalFirstInstance(Crawler):
                     valorAcao=None
                 ),
                 partesProcesso=dict(),
-                movimentacoes=dict()
+                movimentacoes=list()
             )
 
             for div_id in main_section:
@@ -120,7 +120,6 @@ class TjalFirstInstance(Crawler):
                     if not part:
                         continue
                     person_data = part.split('\xa0')
-                    # person_data.reverse()
 
                     if part_type not in result.get('partesProcesso').keys():
                         result.get('partesProcesso').update(
@@ -134,5 +133,27 @@ class TjalFirstInstance(Crawler):
                             categoria=person_data[0].replace(':', '') if len(person_data) > 1 else 'N/A'
                         )
                     )
+
+            movements_section = body.find('tbody', {'id': 'tabelaTodasMovimentacoes'})
+            movement_section_rows = movements_section.find_all('tr')
+
+            for index, block in enumerate(movement_section_rows):
+                date = block.find('td', {'class': 'dataMovimentacao'}).text
+
+                title = block.find('td', {'class': 'descricaoMovimentacao'}).find('a')
+                if title is None:
+                    title = block.find('td', {'class': 'descricaoMovimentacao'}).contents[0].text
+                else:
+                    title = title.text
+                desc = block.find('td', {'class': 'descricaoMovimentacao'}).find('span').text
+
+                result.get('movimentacoes').append(
+                    {
+                        "_numeroMovimentacao": index,
+                        "data": remove_special_symbols_from_string(date),
+                        "titulo": remove_special_symbols_from_string(title) if title is not None else '',
+                        "descricao": remove_special_symbols_from_string(desc) if desc is not None else '',
+                    }
+                )
 
             return result
