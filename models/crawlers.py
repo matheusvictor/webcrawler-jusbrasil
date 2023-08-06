@@ -58,6 +58,7 @@ class TjalFirstInstance(Crawler):
     def extract(self):
         if not is_cnj_format_valid(self.cnj):
             logging.error('Formato de CNJ inválido!')
+            exit(1)
 
         logging.info('Formato de CNJ válido!')
         if find_court_from_cnj_by_regex(self.cnj, self.court_code()):
@@ -100,13 +101,14 @@ class TjalFirstInstance(Crawler):
                 result.get('detalhes')['dataHoraDistribuicao'] = label.find(
                     'div', {'id': 'dataHoraDistribuicaoProcesso'}
                 ).text.strip()
-                result.get('detalhes')['valorAcao'] = label.find(
-                    'div',
-                    {'id': 'valorAcaoProcesso'}
-                ).text.strip()
+                result.get('detalhes')['valorAcao'] = ' '.join(
+                    label.find(
+                        'div',
+                        {'id': 'valorAcaoProcesso'}).text.split()
+                )
 
             logging.info('Coletando informações das partes envolvidas no processo...')
-            parts_section = body.find('table')
+            parts_section = body.find('table', {'id': 'tableTodasPartes'})
 
             parts_section_rows = parts_section.find_all('tr')
 
