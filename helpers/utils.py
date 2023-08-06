@@ -24,7 +24,7 @@ def remove_duplicated_space_and_line_breaks_from_cnj_input(cnj: str):
 
 
 def remove_special_symbols_from_string(string: str):
-    regex_pattern = r'[\n\t\xa0]'
+    regex_pattern = r'[\n\t]'
     return re.sub(regex_pattern, '', string)
 
 
