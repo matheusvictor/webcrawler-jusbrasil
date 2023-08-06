@@ -2,15 +2,13 @@ import logging
 
 from constants import constants
 from helpers.utils import (find_court_from_cnj_by_regex,
-                           is_cnj_format_valid, extrair_advogados_autores, remover_simbolos_especiais)
+                           is_cnj_format_valid, remover_simbolos_especiais)
 from models.models import Crawler
 
 logging.basicConfig(level=logging.DEBUG, format='[%(levelname)s] %(message)s')
 
 
-def main():
-    cnj = '0710802-55.2018.8.02.0001'
-
+def crawler(cnj: str) -> dict:
     if not is_cnj_format_valid(cnj):
         logging.error('Formato de CNJ inválido!')
         # TODO: Na chamada da API, essa condicional deve retornar uma response de erro
@@ -30,7 +28,7 @@ def main():
             body, 'div', {'id': 'containerDadosPrincipaisProcesso'}
         )
 
-        data_from_main_section = dict(
+        result = dict(
             principal=dict(
                 classe=None,
                 assunto=None,
@@ -45,13 +43,13 @@ def main():
         )
 
         for div_id in main_section:
-            data_from_main_section.get('principal')['classe'] = div_id.find(
+            result.get('principal')['classe'] = div_id.find(
                 'span', {'id': 'classeProcesso'}
             ).text.strip()
-            data_from_main_section.get('principal')['assunto'] = div_id.find(
+            result.get('principal')['assunto'] = div_id.find(
                 'span', {'id': 'assuntoProcesso'}
             ).text.strip()
-            data_from_main_section.get('principal')['juiz'] = div_id.find(
+            result.get('principal')['juiz'] = div_id.find(
                 'span', {'id': 'juizProcesso'}
             ).text.strip()
 
@@ -60,13 +58,13 @@ def main():
         )
 
         for label in more_details_section:
-            data_from_main_section.get('detalhes')['area'] = label.find(
+            result.get('detalhes')['area'] = label.find(
                 'div', {'id': 'areaProcesso'}
             ).text.strip()
-            data_from_main_section.get('detalhes')['dataHoraDistribuicao'] = label.find(
+            result.get('detalhes')['dataHoraDistribuicao'] = label.find(
                 'div', {'id': 'dataHoraDistribuicaoProcesso'}
             ).text.strip()
-            data_from_main_section.get('detalhes')['valorAcao'] = label.find(
+            result.get('detalhes')['valorAcao'] = label.find(
                 'div',
                 {'id': 'valorAcaoProcesso'}
             ).text.strip()
@@ -81,20 +79,35 @@ def main():
 
         for block in parts_section_rows:
             # FIXME: Corrigir extração das partes
-            part_type = remover_simbolos_especiais(block.find(class_='tipoDeParticipacao').text)
-            list_parts_process = block.text.replace('\t', '').split('\n')
-            list_parts_process = [part for part in list_parts_process if part is not '']
-            indice_divisor = list_parts_process.index(' ')
-            first_part = list_parts_process[:indice_divisor]
-            second_part = list_parts_process[indice_divisor + 1:]
+            part_type = remover_simbolos_especiais(block.find(class_='tipoDeParticipacao').text).lower()
+            list_parts_process = block.find(class_='nomeParteEAdvogado').text.strip().split('\t \n')
 
-            if f'{part_type.lower()}' not in data_from_main_section:
-                data_from_main_section.get('partesProcesso')[f'{part_type.lower()}'] = dict()
-            data_from_main_section.get('partesProcesso')[f'{part_type.lower()}']['nomes'] = first_part
+            for element in list_parts_process:
+                part = remover_simbolos_especiais(element.strip())
+                if not part:
+                    continue
+                person_data = part.split(':')
+                person_data.reverse()  # garante que o nome do indivíduo esteja sempre no primeiro índice
 
-            if 'nomesProfissionais' not in data_from_main_section.get('partesProcesso')[f'{part_type.lower()}']:
-                data_from_main_section.get('partesProcesso')[f'{part_type.lower()}']['nomesProfissionais'] = set()
-            data_from_main_section.get('partesProcesso')[f'{part_type.lower()}']['nomesProfissionais'] = second_part
+                if part_type not in result.get('partesProcesso').keys():
+                    result.get('partesProcesso').update(
+                        {
+                            part_type: set()
+                        }
+                    )
+                result.get('partesProcesso').get(f'{part_type}').add(
+                    (
+                        person_data[0],
+                        person_data[1] if len(person_data) > 1 else 'N/A'
+                    )
+                )
+
+        return result
+
+
+def main():
+    result = crawler('0710802-55.2018.8.02.0001')
+    print(result)
 
 
 if __name__ == '__main__':
