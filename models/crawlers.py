@@ -42,7 +42,7 @@ class Crawler:
 
     def get_body(self, url: str) -> object or None:
         soup: object = self.__get_page__(url)
-        if soup is not None:
+        if soup:
             return soup.body
         return None
 
@@ -101,16 +101,20 @@ class TjalFirstInstance(Crawler):
                 result.get('detalhes')['dataHoraDistribuicao'] = label.find(
                     'div', {'id': 'dataHoraDistribuicaoProcesso'}
                 ).text.strip()
+
+                value = label.find(
+                    'div',
+                    {'id': 'valorAcaoProcesso'}
+                )
+
                 result.get('detalhes')['valorAcao'] = ' '.join(
-                    label.find(
-                        'div',
-                        {'id': 'valorAcaoProcesso'}).text.split()
+                    value.text.split() if value else list()
                 )
 
             logging.info('Coletando informações das partes envolvidas no processo...')
             parts_section = body.find('table', {'id': 'tableTodasPartes'})
 
-            parts_section_rows = parts_section.find_all('tr')
+            parts_section_rows = parts_section.find_all('tr') if parts_section else list()
 
             for block in parts_section_rows:
                 part_type = remove_special_symbols_from_string(
