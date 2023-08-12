@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from helpers.utils import (
     remove_special_symbols_from_string,
 )
-from models.Crawler import Crawler
+from models.crawler import Crawler
 
 
 class CrawlerEsaj(Crawler):

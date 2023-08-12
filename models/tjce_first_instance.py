@@ -1,6 +1,6 @@
 from constants import constants
 from mocks.mocks import create_bs4_object_from_tjce
-from models.CrawlerEsaj import CrawlerEsaj
+from models.crawler_esaj import CrawlerEsaj
 
 
 class TjceFirstInstance(CrawlerEsaj):

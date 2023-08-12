@@ -1,5 +1,5 @@
 from constants import constants
-from models.CrawlerEsaj import CrawlerEsaj
+from models.crawler_esaj import CrawlerEsaj
 
 
 class TjalFirstInstance(CrawlerEsaj):
