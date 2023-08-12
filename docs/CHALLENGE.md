@@ -43,6 +43,7 @@ Tanto o TJAL como o TJCE tem uma interface web para a consulta de processos. O e
 para mais números de processo, busque no diário oficial de Alagoas: https://www.jusbrasil.com.br/diarios/DJAL/
 
 - 0070337-91.2008.8.06.0001 - TJCE
+- 0200599-25.2022.8.06.0071 - TJCE
 para mais números de processo, busque no diário de justiça do estado do Ceará: https://www.jusbrasil.com.br/diarios/DJCE/
 
 ### Alguns pontos que serão analisados:
