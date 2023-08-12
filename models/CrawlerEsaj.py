@@ -7,7 +7,6 @@ from bs4 import BeautifulSoup
 
 from helpers.utils import (
     remove_special_symbols_from_string,
-    is_cnj_format_valid,
 )
 from models.Crawler import Crawler
 
@@ -57,12 +56,6 @@ class CrawlerEsaj(Crawler):
         pass
 
     def extract(self) -> dict:
-        if not is_cnj_format_valid(self.cnj):
-            logging.error("Formato de CNJ inválido!")
-            exit(1)
-
-        logging.info("Formato de CNJ válido!")
-
         logging.info("Iniciando crawler para busca de 1ª instância...")
 
         self._result.get("detalhes").update(self.__get_process_header__())
@@ -129,7 +122,7 @@ class CrawlerEsaj(Crawler):
     def __get_process_parts__(self) -> dict:
         logging.info("Coletando informações das partes envolvidas...")
 
-        all_parts = dict(list())
+        all_parts = dict()
         parts_section = self.body.find("table", {"id": "tableTodasPartes"})
 
         if parts_section:
