@@ -181,11 +181,6 @@ class CrawlerEsaj(Crawler):
                     )
                 else:
                     title = title.text
-                desc = (
-                    block.find("td", {"class": "descricaoMovimentacao"})
-                    .find("span")
-                    .text
-                )
 
                 self.result.get("movimentacoes").append(
                     {
@@ -193,9 +188,6 @@ class CrawlerEsaj(Crawler):
                         "data": remove_special_symbols_from_string(date),
                         "titulo": remove_special_symbols_from_string(title)
                         if title is not None
-                        else "",
-                        "descricao": remove_special_symbols_from_string(desc)
-                        if desc is not None
                         else "",
                     }
                 )
