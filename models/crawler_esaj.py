@@ -10,6 +10,8 @@ from helpers.utils import (
 )
 from models.crawler import Crawler
 
+logging.basicConfig(level=logging.DEBUG, format="[%(levelname)s] %(message)s")
+
 
 class CrawlerEsaj(Crawler):
     def __init__(self, base_url: str, cnj: str):
@@ -33,9 +35,13 @@ class CrawlerEsaj(Crawler):
     @property
     def body(self) -> object or None:
         if not self._body:
-            soup: object = self.get_page()
-            if soup:
-                self._body = soup.body
+            try:
+                soup: object = self.get_page()
+                if soup:
+                    self._body = soup.body
+            except:
+                logging.error("Não foi possível obter o corpo da página informada!")
+                exit(1)
 
         return self._body
 
@@ -60,7 +66,7 @@ class CrawlerEsaj(Crawler):
 
         self._result.get("detalhes").update(self.__get_process_header__())
         self._result.get("partesProcesso").update(self.__get_process_parts__())
-        self.__get_process_movement__()
+        self._result["movimentacoes"] = self.__get_process_movement__()
 
         return self.result
 
@@ -74,6 +80,8 @@ class CrawlerEsaj(Crawler):
         return BeautifulSoup(request.text, "html.parser")
 
     def __get_process_header__(self) -> dict:
+        logging.info("Coletando dados do cabeçalho...")
+
         details_from_header = dict(
             classe=None,
             assunto=None,
@@ -83,39 +91,39 @@ class CrawlerEsaj(Crawler):
             valorAcao=None,
         )
 
-        logging.info("Coletando dados do cabeçalho...")
-        main_section = self.body.find_all(
-            "div", {"id": "containerDadosPrincipaisProcesso"}
-        )
+        if self.body:
+            main_section = self.body.find_all(
+                "div", {"id": "containerDadosPrincipaisProcesso"}
+            )
 
-        if main_section:
-            for div_id in main_section:
-                details_from_header["classe"] = div_id.find(
-                    "span", {"id": "classeProcesso"}
-                ).text.strip()
-                details_from_header["assunto"] = div_id.find(
-                    "span", {"id": "assuntoProcesso"}
-                ).text.strip()
+            if main_section:
+                for div_id in main_section:
+                    details_from_header["classe"] = div_id.find(
+                        "span", {"id": "classeProcesso"}
+                    ).text.strip()
+                    details_from_header["assunto"] = div_id.find(
+                        "span", {"id": "assuntoProcesso"}
+                    ).text.strip()
 
-                judge = div_id.find("span", {"id": "juizProcesso"})
-                if judge:
-                    details_from_header["juiz"] = judge.text.strip()
+                    judge = div_id.find("span", {"id": "juizProcesso"})
+                    if judge:
+                        details_from_header["juiz"] = judge.text.strip()
 
-        more_details_section = self.body.find_all("div", {"id": "maisDetalhes"})
+            more_details_section = self.body.find_all("div", {"id": "maisDetalhes"})
 
-        if more_details_section:
-            for label in more_details_section:
-                details_from_header["area"] = label.find(
-                    "div", {"id": "areaProcesso"}
-                ).text.strip()
-                details_from_header["dataHoraDistribuicao"] = label.find(
-                    "div", {"id": "dataHoraDistribuicaoProcesso"}
-                ).text.strip()
+            if more_details_section:
+                for label in more_details_section:
+                    details_from_header["area"] = label.find(
+                        "div", {"id": "areaProcesso"}
+                    ).text.strip()
+                    details_from_header["dataHoraDistribuicao"] = label.find(
+                        "div", {"id": "dataHoraDistribuicaoProcesso"}
+                    ).text.strip()
 
-                value = label.find("div", {"id": "valorAcaoProcesso"})
-                details_from_header["valorAcao"] = " ".join(
-                    value.text.split() if value else list()
-                )
+                    value = label.find("div", {"id": "valorAcaoProcesso"})
+                    details_from_header["valorAcao"] = " ".join(
+                        value.text.split() if value else list()
+                    )
 
         return details_from_header
 
@@ -123,71 +131,82 @@ class CrawlerEsaj(Crawler):
         logging.info("Coletando informações das partes envolvidas...")
 
         all_parts = dict()
-        parts_section = self.body.find("table", {"id": "tableTodasPartes"})
+        if self.body:
+            parts_section = self.body.find("table", {"id": "tableTodasPartes"})
 
-        if parts_section:
-            parts_section_rows = (
-                parts_section.find_all("tr") if parts_section else list()
-            )
-
-            for block in parts_section_rows:
-                part_type = (
-                    remove_special_symbols_from_string(
-                        block.find(class_="tipoDeParticipacao").text
-                    )
-                    .lower()
-                    .strip()
-                )
-                list_parts_process = (
-                    block.find(class_="nomeParteEAdvogado").text.strip().split("\t \n")
+            if parts_section:
+                parts_section_rows = (
+                    parts_section.find_all("tr") if parts_section else list()
                 )
 
-                for element in list_parts_process:
-                    part = remove_special_symbols_from_string(element)
-                    if not part:
-                        continue
-                    person_data = part.split("\xa0")
-
-                    if part_type not in all_parts.keys():
-                        all_parts.update({part_type: list()})
-                    all_parts.get(f"{part_type}").append(
-                        dict(
-                            nomes=[name for name in person_data if ":" not in name],
-                            categoria=person_data[0].replace(":", "")
-                            if len(person_data) > 1
-                            else "N/A",
+                for block in parts_section_rows:
+                    part_type = (
+                        remove_special_symbols_from_string(
+                            block.find(class_="tipoDeParticipacao").text
                         )
+                        .lower()
+                        .strip()
                     )
+                    list_parts_process = (
+                        block.find(class_="nomeParteEAdvogado")
+                        .text.strip()
+                        .split("\t \n")
+                    )
+
+                    for element in list_parts_process:
+                        part = remove_special_symbols_from_string(element)
+                        if not part:
+                            continue
+                        person_data = part.split("\xa0")
+
+                        if part_type not in all_parts.keys():
+                            all_parts.update({part_type: list()})
+                        all_parts.get(f"{part_type}").append(
+                            dict(
+                                nomes=[name for name in person_data if ":" not in name],
+                                categoria=person_data[0].replace(":", "")
+                                if len(person_data) > 1
+                                else "N/A",
+                            )
+                        )
 
         return all_parts
 
-    def __get_process_movement__(self):
+    def __get_process_movement__(self) -> list:
         logging.info("Coletando movimentações do processo...")
 
-        movements_section = self.body.find("tbody", {"id": "tabelaTodasMovimentacoes"})
+        all_movements = list()
+        if self.body:
+            movements_section = self.body.find(
+                "tbody", {"id": "tabelaTodasMovimentacoes"}
+            )
 
-        if movements_section:
-            movement_section_rows = movements_section.find_all("tr")
+            if movements_section:
+                movement_section_rows = movements_section.find_all("tr")
 
-            for index, block in enumerate(movement_section_rows):
-                date = block.find("td", {"class": "dataMovimentacao"}).text
+                for index, block in enumerate(movement_section_rows):
+                    date = block.find("td", {"class": "dataMovimentacao"}).text
 
-                title = block.find("td", {"class": "descricaoMovimentacao"}).find("a")
-                if title is None:
-                    title = (
-                        block.find("td", {"class": "descricaoMovimentacao"})
-                        .contents[0]
-                        .text
+                    title = block.find("td", {"class": "descricaoMovimentacao"}).find(
+                        "a"
                     )
-                else:
-                    title = title.text
+                    if title is None:
+                        title = (
+                            block.find("td", {"class": "descricaoMovimentacao"})
+                            .contents[0]
+                            .text
+                        )
+                    else:
+                        title = title.text
 
-                self.result.get("movimentacoes").append(
-                    {
-                        "_numeroMovimentacao": index,
-                        "data": remove_special_symbols_from_string(date),
-                        "titulo": remove_special_symbols_from_string(title)
-                        if title is not None
-                        else "",
-                    }
-                )
+                    all_movements.append(
+                        {
+                            "_numeroMovimentacao": index,
+                            "data": remove_special_symbols_from_string(date),
+                            "titulo": remove_special_symbols_from_string(title)
+                            if title is not None
+                            else "",
+                        }
+                    )
+
+            return all_movements
