@@ -53,7 +53,6 @@ class CrawlerSecondInstanceEsaj(CrawlerEsaj):
         )
 
         if form:
-            print(driver.title)
             driver.find_element(By.ID, "numeroDigitoAnoUnificado").send_keys(
                 f"{self.cnj.split(self.court_code())[0][:-1]}"
             )
@@ -175,7 +174,7 @@ class CrawlerSecondInstanceEsaj(CrawlerEsaj):
 
     def __get_process_parts__(self) -> dict:
         all_parts = dict()
-        parts_section = self.body.find("table", {"id": "tableTodasPartes"})
+        parts_section = self.body.find("table", {"id": "tablePartesPrincipais"})
 
         if parts_section:
             parts_section_rows = (
