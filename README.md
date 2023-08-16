@@ -29,8 +29,14 @@ pip install -r requirements.txt
 python app.py
 ```
 
-3. Aguarde até que o servidor local esteja pronto. Você verá a seguinte mensagem no terminal: ``* Running on http://127.0.0.1:5000 ``
-4. Para ver mais informações sobre os endpoints disponíveis, exemplos de requisições e retornos, acesse:
+3. Aguarde até que o servidor local esteja pronto. Você verá a seguinte mensagem no terminal:
+
+````commandline
+* Running on http://127.0.0.1:5000 
+````
+
+4. Para ver mais informações sobre os endpoints disponíveis, exemplos de requisições e retornos, acesse a seguinte 
+documentação: [Webcrawler Challenge Jusbrasil - Postman](https://documenter.getpostman.com/view/19098148/2s9Xy6qprs).
 
 ---
 
@@ -55,10 +61,6 @@ python app.py
 - [x] Escrever ``COMMENTS.md`` com sugestões de melhorias para o desafio
 - [ ] Requisições assíncronas ou processamento em threads (investigar como)
 - [x] Adicionar linter (Black)
-
-## Materiais consultados
-
-- https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Status
 
 [⬆ Voltar ao topo](#jusbrasil-crawler-challenge)<br>
 
