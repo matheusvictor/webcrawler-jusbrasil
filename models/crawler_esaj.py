@@ -50,9 +50,9 @@ class CrawlerEsaj(Crawler):
     def result(self) -> dict:
         return self._result
 
-    @abstractmethod
+    @property
     def url(self) -> str:
-        pass
+        return self._base_url
 
     @abstractmethod
     def court_code(self) -> str:
