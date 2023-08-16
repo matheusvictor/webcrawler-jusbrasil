@@ -1,7 +1,15 @@
+import logging
+from http import HTTPStatus
+
 from flask import Flask, render_template, request, jsonify
 from constants import constants
 from helpers.utils import is_cnj_format_valid, find_court_from_cnj
-from models.TjalFirstInstance import TjalFirstInstance
+from models.tjal_first_instance import TjalFirstInstance
+from models.tjal_second_instance import TjalSecondInstance
+from models.tjce_first_instance import TjceFirstInstance
+from models.tjce_second_instance import TjceSecondInstance
+
+logging.basicConfig(level=logging.DEBUG, format="[%(levelname)s] %(message)s")
 
 app = Flask(__name__)
 
@@ -23,30 +31,61 @@ def search():
                 court_code = find_court_from_cnj(cnj)
 
                 if court_code == constants.TJAL_CODE:
-                    crawler_tjal = TjalFirstInstance(
+                    crawler_tjal_first_instance = TjalFirstInstance(
                         base_url="https://www2.tjal.jus.br/cpopg/show.do?processo.numero=",
                         cnj=cnj,
                     )
+                    result_tjal_first_instance = crawler_tjal_first_instance.extract()
 
-                    result_tjal = crawler_tjal.extract()
+                    crawler_tjal_second_instance = TjalSecondInstance(
+                        base_url="https://www2.tjal.jus.br/cposg5/open.do",
+                        cnj=cnj,
+                    )
+                    result_tjal_second_instance = crawler_tjal_second_instance.extract()
                     return (
                         jsonify(
-                            message="CNJ válido para busca.",
                             data=dict(
-                                primeiraInstancia=result_tjal, segundaInstancia=dict()
+                                primeiraInstancia=result_tjal_first_instance,
+                                segundaInstancia=result_tjal_second_instance,
                             ),
                         ),
                         200,
                     )
 
                 elif court_code == constants.TJCE_CODE:
-                    pass
+                    crawler_tjce_first_instance = TjceFirstInstance(
+                        base_url="https://esaj.tjce.jus.br/cpopg/show.do",
+                        cnj=cnj,
+                    )
+                    result_for_first_instance = crawler_tjce_first_instance.extract()
+
+                    crawler_tjce_second_instance = TjceSecondInstance(
+                        base_url="https://esaj.tjce.jus.br/cposg5/open.do",
+                        cnj=cnj,
+                    )
+
+                    result_for_second_instance = crawler_tjce_second_instance.extract()
+                    return (
+                        jsonify(
+                            data=dict(
+                                primeiraInstancia=result_for_first_instance,
+                                segundaInstancia=dict(result_for_second_instance),
+                            ),
+                        ),
+                        200,
+                    )
                 else:
-                    return jsonify(error="Tribunal não reconhecido."), 404
+                    return (
+                        jsonify(error="Tribunal não reconhecido."),
+                        HTTPStatus.NOT_FOUND,
+                    )
             except:
-                return jsonify(error="Erro não reconhecido"), 500
+                return (
+                    jsonify(error="Erro não reconhecido"),
+                    HTTPStatus.INTERNAL_SERVER_ERROR,
+                )
         else:
-            return jsonify(error="CNJ inválido para busca."), 400
+            return jsonify(error="CNJ inválido para busca."), HTTPStatus.BAD_REQUEST
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
