@@ -6,7 +6,7 @@
 
 ### 💻 Instalando dependências do projeto
 
-A aplicação foi desenvolvida em **Python 3**, utilizando a versão ``3.13.3`` da linguagem. 
+A aplicação foi desenvolvida usando o framework **Flask** na versão `x.x`, e linguagem **Python** na versão ``3.13.3``.
 As dependências do projeto estão listadas no arquivo `requirements.txt`.
 
 Além disso, será necessário ter instalado na máquina algum dos browsers a seguir: Firefox ou Chrome.
@@ -41,17 +41,19 @@ python app.py
 - [x] Criar API
 - [x] Criar crawlers
 - [x] Extrair dados
-- [x] Escrever ``README.md``
+- [x] Retornar JSON com dados extraídos 
 
 **Ajustes e melhorias:**
 
 - [ ] Criar front-end
 - [x] Melhorar tratamento dos dados
 - [x] Aplicação em paradgima POO
-- [ ] Tratamento de exceções
+- [x] Tratamento de exceções
+  - [ ] Melhorar tratamento de exeções
 - [x] Testes unitários
-- [ ] Escrever ``COMMENTS.md`` com sugestões de melhorias para o desafio
-- [] Threads
+- [x] Escrever ``README.md``
+- [x] Escrever ``COMMENTS.md`` com sugestões de melhorias para o desafio
+- [ ] Requisições assíncronas ou processamento em threads (investigar como)
 - [x] Adicionar linter (Black)
 
 ## Materiais consultados
