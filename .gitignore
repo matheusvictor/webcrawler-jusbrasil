@@ -1,0 +1,4 @@
+/output/
+/geckodriver.log
+/tests/geckodriver.log
+/tests/.pytest_cache/
