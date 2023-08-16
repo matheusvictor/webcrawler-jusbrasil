@@ -16,7 +16,7 @@ Para realizar as requisições, você pode optar por usar o Postman ou Insomnia.
 
 Para executar o projeto, siga estas etapas:
 
-1. Após baixar o projeto, abra um terminal dentro da pasta raiz (``crawler-jusbrasil-challenge``), execute o comando
+1. Após baixar o projeto, abra um terminal dentro da pasta raiz (``webcrawler-jusbrasil``), execute o comando
    abaixo para instalar as dependências utilizando o `pip`:
 
 ````shell
