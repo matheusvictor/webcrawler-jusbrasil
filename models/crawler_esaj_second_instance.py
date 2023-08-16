@@ -159,9 +159,9 @@ class CrawlerSecondInstanceEsaj(CrawlerEsaj):
 
         details_section = self.body.find("div", {"id": "maisDetalhes"})
         if details_section:
-            details_from_header["valorAcao"] = details_section.find(
-                "div", {"id": "valorAcaoProcesso"}
-            ).span.get_text()
+            value = details_section.find("div", {"id": "valorAcaoProcesso"})
+
+            details_from_header["valorAcao"] = value.span.get_text() if value else ""
 
         judge_tag = self.body.find("div", {"class": "div-conteudo container unj-mb-40"})
 
