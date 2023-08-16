@@ -1,62 +1,9 @@
 import unittest
 
-from models.crawler_esaj import CrawlerEsaj
+from models.tjal_first_instance import TjalFirstInstance
 
 
 class TestCrawlerTjalFirstIntance(unittest.TestCase):
-    def test_result_format_when_extract_general_details(self):
-        # given
-        cnj = ""
-        expected = {
-            "area": None,
-            "assunto": None,
-            "classe": None,
-            "dataHoraDistribuicao": None,
-            "juiz": None,
-            "valorAcao": None,
-        }
-
-        crawler = CrawlerEsaj(
-            base_url="https://www2.tjal.jus.br/cpopg/show.do?processo.numero=",
-            cnj=cnj,
-        )
-
-        result = crawler.__get_process_header__()
-        self.assertEqual(result, expected)
-
-    def test_result_format_when_extract_process_parts(self):
-        # given
-        cnj = ""
-        expected = dict()
-
-        crawler = CrawlerEsaj(
-            base_url="https://www2.tjal.jus.br/cpopg/show.do?processo.numero=",
-            cnj=cnj,
-        )
-
-        result = crawler.__get_process_parts__()
-        self.assertEqual(result, expected)
-
-    def test_result_format_when_extract_process_movements(self):
-        # given
-        cnj = ""
-        expected = {
-            "area": None,
-            "assunto": None,
-            "classe": None,
-            "dataHoraDistribuicao": None,
-            "juiz": None,
-            "valorAcao": None,
-        }
-
-        crawler = CrawlerEsaj(
-            base_url="https://www2.tjal.jus.br/cpopg/show.do?processo.numero=",
-            cnj=cnj,
-        )
-
-        result = crawler.__get_process_header__()
-        self.assertEqual(result, expected)
-
     def test_extract_general_details_when_cnj_is_07108025520188020001(self):
         # given
         cnj = "0710802-55.2018.8.02.0001"
@@ -69,8 +16,8 @@ class TestCrawlerTjalFirstIntance(unittest.TestCase):
             "valorAcao": "R$ 281.178,42",
         }
 
-        crawler = CrawlerEsaj(
-            base_url="https://www2.tjal.jus.br/cpopg/show.do?processo.numero=",
+        crawler = TjalFirstInstance(
+            base_url="https://www2.tjal.jus.br/cpopg/show.do",
             cnj=cnj,
         )
 
@@ -107,8 +54,8 @@ class TestCrawlerTjalFirstIntance(unittest.TestCase):
             ],
         }
 
-        crawler = CrawlerEsaj(
-            base_url="https://www2.tjal.jus.br/cpopg/show.do?processo.numero=",
+        crawler = TjalFirstInstance(
+            base_url="https://www2.tjal.jus.br/cpopg/show.do",
             cnj=cnj,
         )
 
@@ -477,8 +424,8 @@ class TestCrawlerTjalFirstIntance(unittest.TestCase):
             },
         ]
 
-        crawler = CrawlerEsaj(
-            base_url="https://www2.tjal.jus.br/cpopg/show.do?processo.numero=",
+        crawler = TjalFirstInstance(
+            base_url="https://www2.tjal.jus.br/cpopg/show.do",
             cnj=cnj,
         )
 
@@ -889,11 +836,17 @@ class TestCrawlerTjalFirstIntance(unittest.TestCase):
                         "categoria": "N/A",
                         "nomes": ["José Carlos Cerqueira Souza Filho"],
                     },
-                    {"categoria": "Advogado", "nomes": ["Vinicius Faria de Cerqueira"]},
+                    {
+                        "categoria": "Advogado",
+                        "nomes": ["Vinicius Faria de Cerqueira"],
+                    },
                 ],
                 "autora": [
                     {"categoria": "N/A", "nomes": ["Livia Nascimento da Rocha"]},
-                    {"categoria": "Advogado", "nomes": ["Vinicius Faria de Cerqueira"]},
+                    {
+                        "categoria": "Advogado",
+                        "nomes": ["Vinicius Faria de Cerqueira"],
+                    },
                 ],
                 "ré": [
                     {"categoria": "N/A", "nomes": ["Cony Engenharia Ltda."]},
@@ -917,8 +870,8 @@ class TestCrawlerTjalFirstIntance(unittest.TestCase):
             },
         }
 
-        crawler = CrawlerEsaj(
-            base_url="https://www2.tjal.jus.br/cpopg/show.do?processo.numero=",
+        crawler = TjalFirstInstance(
+            base_url="https://www2.tjal.jus.br/cpopg/show.do",
             cnj=cnj,
         )
 
