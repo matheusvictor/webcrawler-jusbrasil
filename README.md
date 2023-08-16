@@ -19,15 +19,15 @@ Para executar o projeto, siga estas etapas:
 1. Após baixar o projeto, abra um terminal dentro da pasta raiz (``webcrawler-jusbrasil``), execute o comando
    abaixo para instalar as dependências utilizando o `pip`:
 
-````shell
+````bash
 pip install -r requirements.txt
 ````
 
 2. Depois que as dependências forem instaladas, ainda no terminal, execute o comando a seguir:
 
-```
+````bash
 python app.py
-```
+````
 
 3. Aguarde até que o servidor local esteja pronto. Você verá a seguinte mensagem no terminal:
 
