@@ -6,8 +6,8 @@
 
 ### 💻 Instalando dependências do projeto
 
-A aplicação foi desenvolvida usando o framework **Flask** na versão `x.x`, e linguagem **Python** na versão ``3.13.3``.
-As dependências do projeto estão listadas no arquivo `requirements.txt`.
+A aplicação foi desenvolvida usando o framework **Flask** na versão `2.3.2`, e linguagem **Python** na versão
+``3.13.3``. As dependências do projeto estão listadas no arquivo `requirements.txt`.
 
 Além disso, será necessário ter instalado na máquina algum dos browsers a seguir: Firefox ou Chrome.
 Para realizar as requisições, você pode optar por usar o Postman ou Insomnia.
@@ -36,7 +36,10 @@ python app.py
 ````
 
 4. Para ver mais informações sobre os endpoints disponíveis, exemplos de requisições e retornos, acesse a seguinte 
-documentação: [Webcrawler Challenge Jusbrasil - Postman](https://documenter.getpostman.com/view/19098148/2s9Xy6qprs).
+documentação: [Webcrawler Challenge Jusbrasil - Postman](https://documenter.getpostman.com/view/19098148/2s9Xy6qprs). Você pode realizar as requisições usando o Postman ou 
+o Insomnia. Caso opte pelo Postman, dentro da pasta raiz do projeto, navegue até o diretório ``docs``, e lá você 
+encontrará um arquivo ``Webcrawler Challenge Jusbrasil.postman_collection.json`` que poderá ser utilizado como coleções
+de requisição que podem ser executadas. 
 
 ---
 
